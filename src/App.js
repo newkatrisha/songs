@@ -1,56 +1,54 @@
-import React from "react";
-import "./App.css";
-import { fetchArtists, fetchTopTracks } from "./api";
-import LyricsSearch from "./components/LyricsSearch";
-import SongsList from "./components/SongsList";
+import React, { Component } from "react";
+import { fetchArtists } from "./api";
+import Songs from "./components/Songs";
+import Lyrics from "./components/Lyrics";
 
-class App extends React.Component {
+class App extends Component {
   state = {
+    artists: [],
     artist: "",
-    header: "Top Artists",
-    topArtists: [],
-    topTracks: [],
+    song: "",
+    activeOnScreen: "",
   };
 
   async componentDidMount() {
     const artists = await fetchArtists();
-    this.setState({ topArtists: artists.data.artists.artist });
+    this.setState({ artists: artists.data.artists.artist });
   }
 
-  handleArtistClick = async (e) => {
-    this.setState({ artist: e.target.innerHTML });
-    // fetch track names of the artist
-    let artistTracks = await fetchTopTracks(
-      e.target.innerHTML.replace(/\s/g, "").toLowerCase()
-    );
-    let tracks = artistTracks.data.toptracks.track.map((track) => track.name);
-    this.setState({
-      topTracks: tracks,
-      header: `${this.state.artist}'s songs`,
-    });
-
-    // expand artist name to show the user their tracks
-    let element = document.getElementById("toggle");
-
-    if (element.style.display == "block" || element.style.display == "") {
-      element.style.display = "none";
-    } else {
-      element.style.display = "block";
-    }
+  handleOnArtistClick = (e) => {
+    this.setState({ artist: e.target.innerHTML, activeOnScreen: "songs" });
   };
 
-  render() {
-    return (
-      <div className="App">
-        <h1 onClick={this.onHeaderClick}>{this.state.header}</h1>
-        <div className="ui container">
-          <div id="toggle" className="ui middle aligned selection list">
-            {this.state.topArtists.length &&
-              this.state.topArtists.map((artist) => {
+  handleSongClick = (e) => {
+    console.log(e.target.innerHTML);
+    this.setState({ song: e.target.innerHTML, activeOnScreen: "lyrics" });
+  };
+
+  handleButtonClick = () => {
+    this.setState({ activeOnScreen: "" });
+  };
+
+  makeSwitch = () => {
+    switch (this.state.activeOnScreen) {
+      case "songs":
+        return (
+          <Songs artist={this.state.artist} onClick={this.handleSongClick} />
+        );
+      case "lyrics":
+        return <Lyrics artist={this.state.artist} song={this.state.song} />;
+      default:
+        return (
+          <div className="ui middle aligned selection list">
+            {this.state.artists.length &&
+              this.state.artists.map((artist) => {
                 return (
                   <div className="item" key={artist.playcount}>
                     <div className="content">
-                      <div className="header" onClick={this.handleArtistClick}>
+                      <div
+                        className="header"
+                        onClick={this.handleOnArtistClick}
+                      >
                         {artist.name}
                       </div>
                     </div>
@@ -58,7 +56,18 @@ class App extends React.Component {
                 );
               })}
           </div>
-          <SongsList artist={this.state.artist} tracks={this.state.topTracks} />
+        );
+    }
+  };
+
+  render() {
+    return (
+      <div className="ui container">
+        <div className="ui middle aligned">
+          {this.makeSwitch()}
+          {this.state.activeOnScreen === "lyrics" ? (
+            <button onClick={this.handleButtonClick}>Go back</button>
+          ) : null}
         </div>
       </div>
     );

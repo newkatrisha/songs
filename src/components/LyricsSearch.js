@@ -8,11 +8,6 @@ export default class LyricsSearch extends Component {
     lyrics: "",
   };
 
-  //   async componentDidMount () {
-  //     let lyrics = await fetchLyrics();
-  //     console.log(lyrics);
-  //   }
-
   handleSubmit = async () => {
     const lyrics = await fetchLyrics(this.state.artist, this.state.songName);
     console.log(lyrics);
