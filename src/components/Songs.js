@@ -1,35 +1,28 @@
 import React from "react";
-import { fetchTopTracks, fetchLyrics } from "../api";
+import { fetchTopTracks } from "../api";
 import { useQuery } from "react-query";
+import { Link } from "react-router-dom";
 
-const Songs = ({ artist, goBack }) => {
+const Songs = (props) => {
+  const artist = props.match.params.artist;
   const newArtist = artist.replace(/\s/g, "").toLowerCase();
 
   const { data, status } = useQuery([newArtist], fetchTopTracks);
   const tracks = data && data.data.toptracks.track;
 
-  const onSongClick = (e) => {
-    const songName = e.target.innerHTML;
-    const lyrics = async () => {
-      const song = await fetchLyrics(artist, songName);
-      console.log(song.data.lyrics);
-    };
-    lyrics();
-  };
-
   return (
     <div>
-      <button id="artists" onClick={goBack}>
-        All artists
-      </button>
+      <Link to="/">
+        <button id="artists">All artists</button>
+      </Link>
       {tracks && (
         <div className="songs">
           <h1 id="artistName">{artist}</h1>
           {tracks.map((track, i) => {
             return (
-              <p key={i} onClick={onSongClick}>
-                {track.name}
-              </p>
+              <Link to={"/" + artist + "/" + track.name}>
+                <p key={i}>{track.name}</p>
+              </Link>
             );
           })}
         </div>

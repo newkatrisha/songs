@@ -1,11 +1,13 @@
 import React from "react";
 import { fetchArtists } from "../api";
 import { useQuery } from "react-query";
+import { Link } from "react-router-dom";
 
-const Artists = ({ setPage }) => {
+const Artists = (props) => {
+  console.log(props);
   const { data, status } = useQuery("artists", fetchArtists);
   const artists = data && data.data.artists.artist;
-  onArtistClick = () => {};
+
   return (
     <div className="ui container">
       <div className="ui middle aligned">
@@ -15,9 +17,9 @@ const Artists = ({ setPage }) => {
               return (
                 <div className="item" key={artist.playcount}>
                   <div className="content">
-                    <div className="header" onClick={onArtistClick}>
-                      {artist.name}
-                    </div>
+                    <Link to={"/" + artist.name}>
+                      <div className="header">{artist.name}</div>
+                    </Link>
                   </div>
                 </div>
               );
