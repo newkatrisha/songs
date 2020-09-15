@@ -1,38 +1,31 @@
+body {
+  background-color: #c6d8d3;
+}
+
 .App {
   text-align: center;
+  margin-top: 20px;
+  font-size: 20px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+
+.songs {
+  text-transform: uppercase;
+  margin: 20px 0;
+  font-size: 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.songs :hover {
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+#artists {
+  border-radius: 4px;
+  font-size: 20px;
+  background-color: #f0544f;
+  color: white;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#artistName {
+  font-size: 30px;
 }

@@ -1,77 +1,74 @@
-import React, { Component } from "react";
-import { fetchArtists } from "./api";
+import React, { useState } from "react";
 import Songs from "./components/Songs";
 import Lyrics from "./components/Lyrics";
+import { fetchArtists } from "./api";
+import { useQuery } from "react-query";
+import { ReactQueryDevtools } from "react-query-devtools";
+import "./App.css";
 
-class App extends Component {
-  state = {
-    artists: [],
-    artist: "",
-    song: "",
-    activeOnScreen: "",
+const App = () => {
+  const [artist, setArtist] = useState(null);
+  const [page, setPage] = useState("artists");
+
+  const handleOnArtistClick = (e) => {
+    setArtist(e.target.innerHTML);
+    setPage("songs");
   };
 
-  async componentDidMount() {
-    const artists = await fetchArtists();
-    this.setState({ artists: artists.data.artists.artist });
-  }
-
-  handleOnArtistClick = (e) => {
-    this.setState({ artist: e.target.innerHTML, activeOnScreen: "songs" });
+  const handleGoBack = () => {
+    setPage("artists");
   };
 
-  handleSongClick = (e) => {
-    console.log(e.target.innerHTML);
-    this.setState({ song: e.target.innerHTML, activeOnScreen: "lyrics" });
-  };
+  // const handleSongClick = (e) => {
+  //   this.setState({ song: e.target.innerHTML, activeOnScreen: "lyrics" });
+  //   setPage("")
+  // };
 
-  handleButtonClick = () => {
-    this.setState({ activeOnScreen: "" });
-  };
+  // handleButtonClick = () => {
+  //   this.setState({ activeOnScreen: "" });
+  // };
 
-  makeSwitch = () => {
-    switch (this.state.activeOnScreen) {
-      case "songs":
-        return (
-          <Songs artist={this.state.artist} onClick={this.handleSongClick} />
-        );
-      case "lyrics":
-        return <Lyrics artist={this.state.artist} song={this.state.song} />;
-      default:
-        return (
-          <div className="ui middle aligned selection list">
-            {this.state.artists.length &&
-              this.state.artists.map((artist) => {
-                return (
-                  <div className="item" key={artist.playcount}>
-                    <div className="content">
-                      <div
-                        className="header"
-                        onClick={this.handleOnArtistClick}
-                      >
-                        {artist.name}
+  // makeSwitch = () => {
+  //   switch (this.state.activeOnScreen) {
+  //     case "songs":
+  //       return (
+  //         <Songs artist={this.state.artist} onClick={this.handleSongClick} />
+  //       );
+  //     case "lyrics":
+  //       return <Lyrics artist={this.state.artist} song={this.state.song} />;
+  const { data, status } = useQuery("artists", fetchArtists);
+  const artists = data && data.data.artists.artist;
+
+  return (
+    <>
+      <div className="App">
+        {page === "artists" ? (
+          <div className="ui container">
+            <div className="ui middle aligned">
+              {artists && (
+                <div className="ui middle aligned selection list">
+                  {artists.map((artist) => {
+                    return (
+                      <div className="item" key={artist.playcount}>
+                        <div className="content">
+                          <div className="header" onClick={handleOnArtistClick}>
+                            {artist.name}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                );
-              })}
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
-        );
-    }
-  };
-
-  render() {
-    return (
-      <div className="ui container">
-        <div className="ui middle aligned">
-          {this.makeSwitch()}
-          {this.state.activeOnScreen === "lyrics" ? (
-            <button onClick={this.handleButtonClick}>Go back</button>
-          ) : null}
-        </div>
+        ) : (
+          <Songs artist={artist} goBack={handleGoBack} />
+        )}
       </div>
-    );
-  }
-}
+      <ReactQueryDevtools initialIsOpen={false} />
+    </>
+  );
+};
 
 export default App;
