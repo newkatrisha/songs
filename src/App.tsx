@@ -2,11 +2,11 @@ import React from "react";
 import Artists from "./components/Artists";
 import Songs from "./components/Songs";
 import Lyrics from "./components/Lyrics";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { BrowserRouter, Route } from "react-router-dom";
-import { ReactQueryDevtools } from "react-query-devtools";
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <BrowserRouter>
       <div className="App">
@@ -14,7 +14,6 @@ const App = () => {
         <Route exact path="/:artist" component={Songs} />
         <Route path="/:artist/:song" component={Lyrics} />
       </div>
-      <ReactQueryDevtools initialIsOpen={false} />
     </BrowserRouter>
   );
 };
